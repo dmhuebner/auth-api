@@ -2,7 +2,7 @@ import { BaseModel, schemaOptions } from '../../shared/base.model';
 import { UserRole } from './user-role.enum';
 import { ModelType, prop } from 'typegoose';
 
-export class User extends BaseModel {
+export class User extends BaseModel<User> {
   @prop({
     required: [true, 'Email is required'],
     minlength: [5, 'Email must be at least 5 characters long'],
@@ -30,7 +30,7 @@ export class User extends BaseModel {
 
   @prop()
   get fullName(): string {
-    return `${this.firstName} ${this.lastName}`;
+    return this.firstName && this.lastName ? `${this.firstName} ${this.lastName}` : '';
   }
 
   static get model(): ModelType<User> {
