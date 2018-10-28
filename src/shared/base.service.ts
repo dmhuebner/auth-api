@@ -1,8 +1,9 @@
 import 'automapper-ts/dist/automapper';
-import { Document, Model, Types } from 'mongoose';
+import { Types } from 'mongoose';
+import { ModelType, Typegoose, InstanceType } from 'typegoose';
 
-export abstract class BaseService<T extends Document> {
-  protected _model: Model<T>;
+export abstract class BaseService<T extends Typegoose> {
+  protected _model: ModelType<T>;
   protected _mapper: AutoMapperJs.AutoMapper;
 
   private get modelName(): string {
@@ -14,7 +15,7 @@ export abstract class BaseService<T extends Document> {
   }
 
   async map<K>(
-    objectToMap: Partial<T> | Partial<T>[],
+    objectToMap: Partial<InstanceType<T>> | Partial<InstanceType<T>>[],
     isArray: boolean = false,
     sourceKey?: string,
     destinationKey?: string
@@ -25,28 +26,33 @@ export abstract class BaseService<T extends Document> {
     return this._mapper.map(_sourceKey, _destinationKey, objectToMap);
   }
 
-  async findAll(filter = {}): Promise<T[]> {
+  async findAll(filter = {}): Promise<InstanceType<T>[]> {
     return this._model.find(filter).exec();
   }
 
-  async findOne(filter = {}): Promise<T> {
+  async findOne(filter = {}): Promise<InstanceType<T>> {
     return this._model.findOne(filter).exec();
   }
 
-  async findById(id: string): Promise<T> {
+  async findById(id: string): Promise<InstanceType<T>> {
     return this._model.findById(this.toObjectId(id)).exec();
   }
 
-  async create(item: T): Promise<T> {
+  async create(item: InstanceType<T>): Promise<InstanceType<T>> {
     return this._model.create(item);
   }
 
-  async delete(id: string): Promise<T> {
+  async delete(id: string): Promise<InstanceType<T>> {
     return this._model.findByIdAndRemove(this.toObjectId(id)).exec();
   }
 
-  async update(id: string, item: T): Promise<T> {
+  async update(id: string, item: T): Promise<InstanceType<T>> {
     return this._model.findByIdAndUpdate(this.toObjectId(id), item, {new: true}).exec();
+  }
+
+  // Note: This is a very dangerous function. Use carefully
+  async clearCollection(filter = {}) {
+    return this._model.deleteMany(filter).exec();
   }
 
   private toObjectId(id: string): Types.ObjectId {
