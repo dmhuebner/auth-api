@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SharedModule } from './shared/shared.module';
@@ -6,7 +7,7 @@ import { ConfigService } from './shared/config/config.service';
 import { Config } from './shared/config/config.enum';
 
 @Module({
-  imports: [SharedModule],
+  imports: [SharedModule, MongooseModule.forRoot(ConfigService.connectionString)],
   controllers: [AppController],
   providers: [AppService],
 })
