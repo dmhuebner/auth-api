@@ -7,9 +7,12 @@ import { ConfigService } from './shared/config/config.service';
 import { Config } from './shared/config/config.enum';
 
 @Module({
-  imports: [SharedModule, MongooseModule.forRoot(ConfigService.connectionString)],
+  imports: [
+    SharedModule,
+    MongooseModule.forRoot(ConfigService.connectionString)
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {
 
